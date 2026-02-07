@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MyWebsite</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">MyWebsite</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="login.html" class="active">Login</a></li>
+                <li><a href="signup.html">Sign Up</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="auth-section">
+        <div class="auth-container">
+            <h2>Login</h2>
+
+            <!-- 🔹 This form sends to /login via POST -->
+            <form id="loginForm" class="auth-form" action="/login" method="POST">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Enter your email" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Enter your password" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
+            </form>
+
+            <p class="auth-link">
+                Don't have an account? <a href="signup.html">Sign up here</a>
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 MyWebsite. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Logout function
+        function logout() {
+            localStorage.removeItem('jwtToken');
+            alert('Logged out successfully');
+            window.location.href = '/login.html';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Store JWT token in localStorage
+                    localStorage.setItem('jwtToken', data.token);
+                    alert(data.message);
+                    window.location.href = '/index.html';
+                } else {
+                    alert(data.message);
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
